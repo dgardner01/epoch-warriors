@@ -22,7 +22,7 @@ public class AICombat : MonoBehaviour
         if (randomAttack && !movement.attacking)
         {
             Attack(attacks[Random.Range(0, attacks.Length)]);
-            //randomAttack = false;
+            randomAttack = false;
         }
 
         //if stunned, stop movement
