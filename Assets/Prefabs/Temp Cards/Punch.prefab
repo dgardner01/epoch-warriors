@@ -1198,3 +1198,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverSpeed: 0.05
   hoverOffset: 100
+  playHeight: 225

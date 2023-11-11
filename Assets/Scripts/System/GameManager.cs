@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    enum GameState {
+    public enum GameState {
         Intro,
         FightEnd, 
         CardBegin, 
@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
         FightBegin,
     };
     public float turnTransitionTime;
-    GameState gameState = GameState.Intro;
+    public GameState gameState = GameState.Intro;
     UIManager UI => FindAnyObjectByType<UIManager>();
     // Start is called before the first frame update
     void Start()
@@ -41,18 +41,17 @@ public class GameManager : MonoBehaviour
                 CardBegin();
                 break;
         }
+        print(gameState);
     }
 
     void Intro()
     {
-        print("intro");
         gameState = GameState.CardBegin;
         StartCoroutine(SwitchGameState());
     }
 
     void CardBegin()
     {
-        print("card begin");
         gameState = GameState.CardPlay;
         UI.SetAnimationState(UI.fogAnimator, "up", true);
         UI.SetAnimationState(UI.cardsAnimator, "up", true);

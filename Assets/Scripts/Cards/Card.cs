@@ -3,43 +3,102 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
+    IPointerDownHandler, IPointerUpHandler
 {
-    float start_y = 0;
-    float end_y = 0;
-    float current_y = 0;
+    Vector3 startPos;
+    Vector3 endPos;
+    Vector3 currentPos;
+
     public float hoverSpeed;
     public float hoverOffset;
-    bool hovering = false;
-    // Start is called before the first frame update
+    public float playHeight;
+
+    bool hovering;
+    bool dragging;
+    bool placed;
+    CardManager cardManager => FindAnyObjectByType<CardManager>();
+    GameManager gameManager => FindAnyObjectByType<GameManager>();
+
     void Start()
     {
-        start_y = transform.localPosition.y;
-        end_y = start_y + hoverOffset;
+        startPos = transform.localPosition;
+        endPos = startPos + Vector3.up * hoverOffset;
     }
 
     // Update is called once per frame
     void Update()
     {
-        FloatOnHover();
+        if (gameManager.gameState == GameManager.GameState.CardPlay)
+        {
+            if (!dragging)
+            {
+                FloatOnHover();
+            }
+            else
+            {
+                DragCard();
+            }
+        }
     }
 
     public void FloatOnHover()
     {
-        current_y = Mathf.Lerp(current_y,hovering ? end_y : start_y, hoverSpeed);
+        //if hovering, move card y to offset
+        //if not hovering, move back to start y
+        //lerp for smooth animation
 
-        transform.localPosition = 
-        new Vector3(transform.localPosition.x,current_y,transform.localPosition.z);
+        currentPos = Vector3.Lerp(currentPos,hovering ? endPos : startPos, hoverSpeed);
+        currentPos.z = 0;
+
+        transform.localPosition = currentPos;
+
+        transform.localRotation = Quaternion.Euler(Vector3.zero);
+    }
+
+    public void DragCard()
+    {
+        Vector3 cardPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        cardPos.z = 0;
+
+        transform.position = cardPos;
+
+        //reset rotation
+        transform.rotation = Quaternion.Euler(Vector3.zero);
     }
 
     public void OnPointerEnter(PointerEventData pointerEnter)
     {
         hovering = true;
-        transform.parent.SetAsLastSibling();
+        if (!placed)
+        {
+            //make card render in front of all other cards
+            transform.parent.SetAsLastSibling();
+        }
     }
 
     public void OnPointerExit(PointerEventData pointerExit)
     {
         hovering = false;
+    }
+
+    public void OnPointerDown(PointerEventData pointerDown)
+    {
+        dragging = true;
+    }
+
+    public void OnPointerUp(PointerEventData pointerUp)
+    {
+        dragging = false;
+        if (transform.localPosition.y > playHeight)
+        {
+            cardManager.PlaceCard(gameObject, cardManager.playArea);
+            placed = true;
+        }
+        else
+        {
+            cardManager.PlaceCard(gameObject, cardManager.hand);
+            placed = false;
+        }
     }
 }
