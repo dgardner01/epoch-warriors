@@ -14,9 +14,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public float hoverOffset;
     public float playHeight;
 
+    bool activePlay;
     bool hovering;
     bool dragging;
     bool placed;
+    public bool playable = true;
+
     CardManager cardManager => FindAnyObjectByType<CardManager>();
     GameManager gameManager => FindAnyObjectByType<GameManager>();
 
@@ -29,7 +32,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     // Update is called once per frame
     void Update()
     {
-        if (gameManager.gameState == GameManager.GameState.CardPlay)
+        //if the game is in Card Play state & playable, play is active
+        activePlay = gameManager.gameState == GameManager.GameState.CardPlay && playable;
+        if (activePlay)
         {
             if (!dragging)
             {
@@ -70,7 +75,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public void OnPointerEnter(PointerEventData pointerEnter)
     {
         hovering = true;
-        if (!placed)
+        if (!placed && activePlay)
         {
             //make card render in front of all other cards
             transform.parent.SetAsLastSibling();

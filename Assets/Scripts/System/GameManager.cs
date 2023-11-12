@@ -34,27 +34,26 @@ public class GameManager : MonoBehaviour
         switch (gameState)
         {
             case GameState.Intro:
-                Intro();
+                CardBegin();
                 break;
 
             case GameState.CardBegin:
-                CardBegin();
+                CardPlay();
                 break;
         }
         print(gameState);
     }
 
-    void Intro()
-    {
-        gameState = GameState.CardBegin;
-        StartCoroutine(SwitchGameState());
-    }
-
     void CardBegin()
     {
-        gameState = GameState.CardPlay;
+        gameState = GameState.CardBegin;
         UI.SetAnimationState(UI.fogAnimator, "up", true);
         UI.SetAnimationState(UI.cardsAnimator, "up", true);
         StartCoroutine(SwitchGameState());
+    }
+
+    void CardPlay()
+    {
+        gameState = GameState.CardPlay;
     }
 }
