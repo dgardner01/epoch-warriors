@@ -5,21 +5,50 @@ using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
 {
+    public GameObject[] deck;
+
+    public List<GameObject> deckCards;
+    public List<GameObject> handCards;
+
     public GameObject playArea;
     public GameObject arrows;
     public GameObject hand;
 
     UIManager UI => FindAnyObjectByType<UIManager>();
+    GameManager gameManager => FindAnyObjectByType<GameManager>();
     // Start is called before the first frame update
     void Start()
     {
-        
+        InitializeDeckList();
+        DrawCards();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+    public void InitializeDeckList()
+    {
+        for (int i = 0; i < deck.Length; i++)
+        {
+            deckCards.Add(deck[i]);
+        }
+    }
+    public void DrawCards()
+    {
+        Transform _hand = hand.transform;
+        for (int i = 0; i < _hand.childCount; i++)
+        {
+            if (_hand.GetChild(i).childCount == 0)
+            {
+                GameObject drawnCard = deck[Random.Range(0, deck.Length)];
+                deckCards.Remove(drawnCard);
+                GameObject cardInstance = Instantiate(drawnCard, 
+                    _hand.GetChild(i).transform.position, Quaternion.identity);
+                PlaceCard(cardInstance, hand);
+            }
+        }
     }
     public void PlaceCard(GameObject card, GameObject container)
     {
@@ -31,7 +60,7 @@ public class CardManager : MonoBehaviour
                 Transform cardParent = container.transform.GetChild(i);
                 card.transform.SetParent(cardParent);
                 card.transform.localScale = Vector3.one;
-
+                card.transform.localRotation = Quaternion.Euler(Vector3.zero);
                 UpdatePlayArea();
                 return;
             }
@@ -76,10 +105,15 @@ public class CardManager : MonoBehaviour
         }
 
         //show unplayable cards
-        UpdatePlayableHand();
+        if (gameManager.gameState == GameManager.GameState.CardPlay)
+        {
+            UpdatePlayableHand();
+        }
 
         //update spirit meter
         UI.UpdateSpiritMeter(TotalSpiritInPlayArea());
+
+        
     }
 
     public void UpdatePlayableHand()
@@ -94,12 +128,10 @@ public class CardManager : MonoBehaviour
             _firstOrder = playArea.transform.GetChild(0).GetChild(0).GetComponent<CardData>().order;
         }
         int _last = (int)(CardsInPlayArea()-1);
-        print(_last);
         if (_last > -1 && playArea.transform.GetChild(_last).childCount > 0)
         {
             _lastOrder = playArea.transform.GetChild(_last).GetChild(0).GetComponent<CardData>().order;
         }
-        print(_lastOrder);
 
         //cards are unplayable if not started with a starter or an ender is in play
         for (int i = 0; i < _hand.childCount; i++)

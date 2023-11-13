@@ -95,15 +95,18 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public void OnPointerUp(PointerEventData pointerUp)
     {
         dragging = false;
-        if (transform.localPosition.y > playHeight)
+        if (activePlay)
         {
-            cardManager.PlaceCard(gameObject, cardManager.playArea);
-            placed = true;
-        }
-        else
-        {
-            cardManager.PlaceCard(gameObject, cardManager.hand);
-            placed = false;
+            if (transform.localPosition.y > playHeight)
+            {
+                cardManager.PlaceCard(gameObject, cardManager.playArea);
+                placed = true;
+            }
+            else
+            {
+                cardManager.PlaceCard(gameObject, cardManager.hand);
+                placed = false;
+            }
         }
     }
 }
