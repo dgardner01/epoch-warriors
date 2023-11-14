@@ -7,8 +7,10 @@ public class UIManager : MonoBehaviour
 {
     public Animator fogAnimator;
     public Animator cardsAnimator;
+    public Animator handAnimator;
 
     CardManager cardManager => FindAnyObjectByType<CardManager>();
+    GameManager gameManager => FindAnyObjectByType<GameManager>();
 
     public GameObject spiritMeter;
     public TextMeshProUGUI spiritText;
@@ -57,11 +59,16 @@ public class UIManager : MonoBehaviour
             meterScale, lerpSpeed);
 
         //anchor meter to hand
-        Vector3 meterPos = cardsAnimator.gameObject.transform.position;
+        Vector3 meterPos = handAnimator.gameObject.transform.position;
         meterPos.x = spiritMeter.gameObject.transform.position.x;
         spiritMeter.transform.parent.parent.position = meterPos;
 
         //update text showing how much spirit left
         spiritText.text = "" + (currentSpirit - spiritInPlay);
+    }
+
+    public void NextGameState()
+    {
+        StartCoroutine(gameManager.SwitchGameState());
     }
 }
