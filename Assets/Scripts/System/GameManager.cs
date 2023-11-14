@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -55,6 +56,10 @@ public class GameManager : MonoBehaviour
             case GameState.CardBattle:
                 CardEnd();
                 break;
+
+            case GameState.CardEnd:
+                FightBegin();
+                break;
         }
         print(gameState);
     }
@@ -93,5 +98,12 @@ public class GameManager : MonoBehaviour
         cardManager.UpdatePlayArea();
         UI.SetAnimationState(UI.fogAnimator, "up", false);
         UI.SetAnimationState(UI.cardsAnimator, "up", false);
+        StartCoroutine(SwitchGameState());
+    }
+    
+    void FightBegin()
+    {
+        gameState = GameState.FightBegin;
+        SceneManager.LoadScene(0);
     }
 }
