@@ -23,6 +23,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     CardManager cardManager => FindAnyObjectByType<CardManager>();
     GameManager gameManager => FindAnyObjectByType<GameManager>();
 
+    Animator animator => GetComponent<Animator>();
+
     void Start()
     {
         startPos = transform.localPosition;
@@ -36,17 +38,24 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         activePlay = gameManager.gameState == GameManager.GameState.CardPlay && playable;
         if (activePlay)
         {
-            if (!dragging)
-            {
-                FloatOnHover();
-            }
-            else
+            animator.enabled = false;
+            if (dragging)
             {
                 DragCard();
             }
         }
+        else
+        {
+            animator.enabled = true;
+        }
     }
-
+    private void FixedUpdate()
+    {
+        if (activePlay && !dragging)
+        {
+            FloatOnHover();
+        }
+    }
     public void FloatOnHover()
     {
         //if hovering, move card y to offset

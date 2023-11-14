@@ -488,6 +488,7 @@ GameObject:
   - component: {fileID: 6420464417587569030}
   - component: {fileID: 1104432202696348657}
   - component: {fileID: 4341112963709458385}
+  - component: {fileID: 4064948128761092570}
   m_Layer: 5
   m_Name: Block Ender
   m_TagString: Untagged
@@ -570,7 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f129fe077b4a4c4e87cbf2cd0b793b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverSpeed: 0.05
+  hoverSpeed: 0.25
   hoverOffset: 100
   playHeight: 225
   playable: 1
@@ -589,6 +590,27 @@ MonoBehaviour:
   cardType: 1
   cost: 3
   order: 2
+--- !u!95 &4064948128761092570
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3395667279427420627}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 9ced9d9e726800348b28c123feab434d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3630664930059955175
 GameObject:
   m_ObjectHideFlags: 0

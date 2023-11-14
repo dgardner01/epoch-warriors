@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     };
     public float turnTransitionTime;
     public GameState gameState = GameState.Intro;
+    CardManager cardManager => FindAnyObjectByType<CardManager>();
     UIManager UI => FindAnyObjectByType<UIManager>();
     EnemyCardUI AI => FindAnyObjectByType<EnemyCardUI>();
     // Start is called before the first frame update
@@ -50,6 +51,10 @@ public class GameManager : MonoBehaviour
             case GameState.CardBattleBegin:
                 CardBattle();
                 break;
+
+            case GameState.CardBattle:
+                CardEnd();
+                break;
         }
         print(gameState);
     }
@@ -79,5 +84,14 @@ public class GameManager : MonoBehaviour
     void CardBattle()
     {
         gameState = GameState.CardBattle;
+        StartCoroutine(AI.RevealCards());
+    }
+
+    void CardEnd()
+    {
+        gameState = GameState.CardEnd;
+        cardManager.UpdatePlayArea();
+        UI.SetAnimationState(UI.fogAnimator, "up", false);
+        UI.SetAnimationState(UI.cardsAnimator, "up", false);
     }
 }
