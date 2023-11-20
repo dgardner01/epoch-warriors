@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public float turnTransitionTime;
     public GameState gameState = GameState.Intro;
     CardManager cardManager => FindAnyObjectByType<CardManager>();
+    BattleManager battleManager => FindAnyObjectByType<BattleManager>();
     UIManager UI => FindAnyObjectByType<UIManager>();
     EnemyCardUI AI => FindAnyObjectByType<EnemyCardUI>();
     // Start is called before the first frame update
@@ -104,6 +105,6 @@ public class GameManager : MonoBehaviour
     void FightBegin()
     {
         gameState = GameState.FightBegin;
-        SceneManager.LoadScene(0);
+        StartCoroutine(battleManager.FightScene());
     }
 }

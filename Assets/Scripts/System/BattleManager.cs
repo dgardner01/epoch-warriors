@@ -7,8 +7,12 @@ public class BattleManager : MonoBehaviour
     public GameObject playerArea;
     public GameObject enemyArea;
 
+    public Animator playerActor;
+    public Animator enemyActor;
+
     public List<CardData.Type> playerActions;
     public List<CardData.Type> enemyActions;
+    public List<string> winner;
 
     GameManager gameManager => FindAnyObjectByType<GameManager>();
     CardManager cardManager => FindAnyObjectByType<CardManager>();
@@ -40,25 +44,46 @@ public class BattleManager : MonoBehaviour
                     || playerData.cardType == CardData.Type.Block && enemyData.cardType == CardData.Type.Attack
                     || playerData.cardType == CardData.Type.Grab && enemyData.cardType == CardData.Type.Block)
                 {
-                    playerCard.GetComponent<Animator>().SetTrigger("hit");
-                    yield return new WaitForSeconds(0.3f);
-                    enemyCard.GetComponent<Animator>().SetTrigger("hurt");
-                    yield return new WaitForSeconds(0.3f);
+                    if (playerData.cardType == CardData.Type.Block)
+                    {
+                        enemyCard.GetComponent<Animator>().SetTrigger("hit");
+                    }
+                    else
+                    {
+                        playerCard.GetComponent<Animator>().SetTrigger("hit");
+                        yield return new WaitForSeconds(0.25f);
+                        enemyCard.GetComponent<Animator>().SetTrigger("hurt");
+                    }
+                    winner.Add("player");
+                    yield return new WaitForSeconds(0.25f);
                 }
                 else if (playerData.cardType == enemyData.cardType)
                 {
-                    playerCard.GetComponent<Animator>().SetTrigger("hit");
-                    enemyCard.GetComponent<Animator>().SetTrigger("hit");
-                    yield return new WaitForSeconds(0.3f);
+                    if (playerData.cardType != CardData.Type.Block)
+                    {
+                        playerCard.GetComponent<Animator>().SetTrigger("hit");
+                        enemyCard.GetComponent<Animator>().SetTrigger("hit");
+                    }
+                    winner.Add("draw");
+                    yield return new WaitForSeconds(0.5f);
                 }
                 else
                 {
-                    enemyCard.GetComponent<Animator>().SetTrigger("hit");
-                    yield return new WaitForSeconds(0.3f);
-                    playerCard.GetComponent<Animator>().SetTrigger("hurt");
-                    yield return new WaitForSeconds(0.3f);
+                    if (enemyData.cardType == CardData.Type.Block)
+                    {
+                        playerCard.GetComponent<Animator>().SetTrigger("hit");
+                        yield return new WaitForSeconds(0.25f);
+                    }
+                    else
+                    {
+                        enemyCard.GetComponent<Animator>().SetTrigger("hit");
+                        yield return new WaitForSeconds(0.25f);
+                        playerCard.GetComponent<Animator>().SetTrigger("hurt");
+                    }
+                    winner.Add("enemy");
+                    yield return new WaitForSeconds(0.25f);
                 }
-
+                yield return new WaitForSeconds(0.5f);
                 playerActions.Add(playerData.cardType);
                 enemyActions.Add(enemyData.cardType);
             }
@@ -76,5 +101,79 @@ public class BattleManager : MonoBehaviour
             }
         }
         StartCoroutine(gameManager.SwitchGameState());
+    }
+    public void SetActorStateWithType(Animator actor, CardData.Type type)
+    {
+        switch (type)
+        {
+            case CardData.Type.Attack:
+                actor.SetTrigger("attack");
+                break;
+            case CardData.Type.Block:
+                actor.SetTrigger("block");
+                break;
+            case CardData.Type.Grab:
+                actor.SetTrigger("grab");
+                break;
+        }
+
+    }
+    public IEnumerator FightScene()
+    {
+        yield return new WaitForSeconds(1);
+        for (int i = 0; i < playerActions.Count; i++)
+        {
+            if (winner[i] == "player")
+            {
+                if (playerActions[i] == CardData.Type.Block)
+                {
+                    print("player blocks");
+                    print("enemy attacks");
+                    SetActorStateWithType(playerActor, playerActions[i]);
+                    yield return new WaitForSeconds(0.5f);
+                }
+                else
+                {
+                    print("player does " + playerActions[i]);
+                    SetActorStateWithType(playerActor, playerActions[i]);
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
+            else if (winner[i] == "enemy")
+            {
+                if (enemyActions[i] == CardData.Type.Block)
+                {
+                    print("enemy blocks");
+                    print("player attacks");
+                    SetActorStateWithType(playerActor, playerActions[i]);
+                    yield return new WaitForSeconds(0.5f);
+                }
+                else
+                {
+                    print("enemy does " + enemyActions[i]);
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
+            else
+            {
+                if (playerActions[i] == CardData.Type.Attack)
+                {
+                    print("player does " + playerActions[i]);
+                    SetActorStateWithType(playerActor, playerActions[i]);
+                    yield return new WaitForSeconds(0.5f);
+                    print("enemy does " + enemyActions[i]);
+                    yield return new WaitForSeconds(0.5f);
+                }
+                else if (playerActions[i] == CardData.Type.Grab)
+                {
+                    print("player does " + playerActions[i]);
+                    SetActorStateWithType(playerActor, playerActions[i]);
+                    print("enemy does " + enemyActions[i]);
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
+            yield return new WaitForSeconds(0.5f);
+        }
+
     }
 }
