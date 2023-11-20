@@ -61,6 +61,13 @@ public class GameManager : MonoBehaviour
             case GameState.CardEnd:
                 FightBegin();
                 break;
+
+            case GameState.FightBegin:
+                FightEnd();
+                break;
+            case GameState.FightEnd:
+                CardBegin();
+                break;
         }
         print(gameState);
     }
@@ -68,7 +75,9 @@ public class GameManager : MonoBehaviour
     void CardBegin()
     {
         gameState = GameState.CardBegin;
+        cardManager.DrawCards();
         UI.SetAnimationState(UI.fogAnimator, "up", true);
+        UI.SetAnimationState(UI.handAnimator, "up", true);
         UI.SetAnimationState(UI.handAnimator, "up", true);
         StartCoroutine(SwitchGameState());
     }
@@ -106,5 +115,11 @@ public class GameManager : MonoBehaviour
     {
         gameState = GameState.FightBegin;
         StartCoroutine(battleManager.FightScene());
+    }
+
+    void FightEnd()
+    {
+        gameState = GameState.FightEnd;
+        StartCoroutine(SwitchGameState());
     }
 }

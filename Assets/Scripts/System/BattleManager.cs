@@ -129,6 +129,7 @@ public class BattleManager : MonoBehaviour
                 {
                     print("player blocks");
                     print("enemy attacks");
+                    SetActorStateWithType(enemyActor, enemyActions[i]);
                     SetActorStateWithType(playerActor, playerActions[i]);
                     yield return new WaitForSeconds(0.5f);
                 }
@@ -146,11 +147,13 @@ public class BattleManager : MonoBehaviour
                     print("enemy blocks");
                     print("player attacks");
                     SetActorStateWithType(playerActor, playerActions[i]);
+                    SetActorStateWithType(enemyActor, enemyActions[i]);
                     yield return new WaitForSeconds(0.5f);
                 }
                 else
                 {
                     print("enemy does " + enemyActions[i]);
+                    SetActorStateWithType(enemyActor, enemyActions[i]);
                     yield return new WaitForSeconds(0.5f);
                 }
             }
@@ -160,20 +163,26 @@ public class BattleManager : MonoBehaviour
                 {
                     print("player does " + playerActions[i]);
                     SetActorStateWithType(playerActor, playerActions[i]);
-                    yield return new WaitForSeconds(0.5f);
+                    yield return new WaitForSeconds(1);
                     print("enemy does " + enemyActions[i]);
+                    SetActorStateWithType(enemyActor, enemyActions[i]);
                     yield return new WaitForSeconds(0.5f);
                 }
-                else if (playerActions[i] == CardData.Type.Grab)
+                else 
                 {
                     print("player does " + playerActions[i]);
                     SetActorStateWithType(playerActor, playerActions[i]);
                     print("enemy does " + enemyActions[i]);
+                    SetActorStateWithType(enemyActor, enemyActions[i]);
                     yield return new WaitForSeconds(0.5f);
                 }
             }
             yield return new WaitForSeconds(0.5f);
         }
-
+        yield return new WaitForSeconds(1);
+        playerActions.Clear();
+        enemyActions.Clear();
+        winner.Clear();
+        StartCoroutine(gameManager.SwitchGameState());
     }
 }

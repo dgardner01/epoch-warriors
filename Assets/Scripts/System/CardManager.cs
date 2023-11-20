@@ -48,7 +48,12 @@ public class CardManager : MonoBehaviour
                     _hand.GetChild(i).transform.position, Quaternion.identity);
                 PlaceCard(cardInstance, hand);
             }
+            else
+            {
+                _hand.GetChild(i).GetChild(0).GetComponent<Card>().playable = true;
+            }
         }
+        UpdatePlayableHand();
     }
     public void PlaceCard(GameObject card, GameObject container)
     {
