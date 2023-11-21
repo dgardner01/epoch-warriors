@@ -10,7 +10,9 @@ public class CardData : MonoBehaviour
         Block,
         Grab
     }
+    public string title;
     public Type cardType;
     public int cost;
     public int order;
+    public int damage;
 }

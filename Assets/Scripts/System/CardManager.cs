@@ -37,6 +37,7 @@ public class CardManager : MonoBehaviour
     }
     public void DrawCards()
     {
+        print("hi");
         Transform _hand = hand.transform;
         for (int i = 0; i < _hand.childCount; i++)
         {
@@ -65,6 +66,7 @@ public class CardManager : MonoBehaviour
                 Transform cardParent = container.transform.GetChild(i);
                 card.transform.SetParent(cardParent);
                 card.transform.localScale = Vector3.one;
+                card.transform.localPosition = Vector3.zero;
                 card.transform.localRotation = Quaternion.Euler(Vector3.zero);
                 UpdatePlayArea();
                 return;

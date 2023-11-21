@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class UIManager : MonoBehaviour
@@ -14,12 +15,14 @@ public class UIManager : MonoBehaviour
 
     public GameObject spiritMeter;
     public TextMeshProUGUI spiritText;
-    float spiritMax = 10;
-    public float currentSpirit = 7;
+    float spiritMax;
+    public float currentSpirit;
     float spiritInPlay = 0;
 
     public GameObject comboPlayButton;
     public TextMeshProUGUI comboPlayText;
+
+    public Image playerHP, enemyHP;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +33,7 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         AnimateSpiritMeter();
+        AnimateHPBar();
     }
 
     public void SetAnimationState(Animator animator, string state, bool status)
@@ -50,6 +54,8 @@ public class UIManager : MonoBehaviour
 
     public void AnimateSpiritMeter()
     {
+        spiritMax = gameManager.Nelly.maxSpirit;
+        currentSpirit = gameManager.Nelly.spirit;
         float lerpSpeed = 0.1f;
 
         //scale meter based on how much spirit in play
@@ -65,6 +71,18 @@ public class UIManager : MonoBehaviour
 
         //update text showing how much spirit left
         spiritText.text = "" + (currentSpirit - spiritInPlay);
+    }
+
+    void AnimateHPBar()
+    {
+        CharacterManager Nelly = gameManager.Nelly;
+        CharacterManager Bruttia = gameManager.Bruttia;
+        float nellyPercent = Nelly.health / Nelly.maxHealth;
+        print(nellyPercent);
+        float bruttiaPercent = Bruttia.health / Bruttia.maxHealth;
+        print(bruttiaPercent);
+        playerHP.fillAmount = nellyPercent;
+        enemyHP.fillAmount = bruttiaPercent;
     }
 
     public void NextGameState()

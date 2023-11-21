@@ -815,6 +815,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f129fe077b4a4c4e87cbf2cd0b793b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  title: {fileID: 0}
+  cost: {fileID: 0}
+  description: {fileID: 0}
+  type: {fileID: 0}
+  attack: {fileID: 0}
+  block: {fileID: 0}
+  grab: {fileID: 0}
+  comboLinks: []
   hoverSpeed: 0.25
   hoverOffset: 100
   playHeight: 225
@@ -831,9 +839,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 559c9e25498c0c642978f5d0431afe35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  title: 
   cardType: 2
   cost: 2
   order: 1
+  damage: 0
 --- !u!95 &3452506459478567267
 Animator:
   serializedVersion: 5

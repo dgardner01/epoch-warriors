@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     };
     public float turnTransitionTime;
     public GameState gameState = GameState.Intro;
+    public CharacterManager Nelly, Bruttia;
     CardManager cardManager => FindAnyObjectByType<CardManager>();
     BattleManager battleManager => FindAnyObjectByType<BattleManager>();
     UIManager UI => FindAnyObjectByType<UIManager>();

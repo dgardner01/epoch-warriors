@@ -12,6 +12,7 @@ public class BattleManager : MonoBehaviour
 
     public List<CardData.Type> playerActions;
     public List<CardData.Type> enemyActions;
+    public List<int> damage;
     public List<string> winner;
 
     GameManager gameManager => FindAnyObjectByType<GameManager>();
@@ -50,6 +51,7 @@ public class BattleManager : MonoBehaviour
                     }
                     else
                     {
+                        damage.Add(playerData.damage);
                         playerCard.GetComponent<Animator>().SetTrigger("hit");
                         yield return new WaitForSeconds(0.25f);
                         enemyCard.GetComponent<Animator>().SetTrigger("hurt");
@@ -61,6 +63,7 @@ public class BattleManager : MonoBehaviour
                 {
                     if (playerData.cardType != CardData.Type.Block)
                     {
+                        damage.Add(playerData.damage);
                         playerCard.GetComponent<Animator>().SetTrigger("hit");
                         enemyCard.GetComponent<Animator>().SetTrigger("hit");
                     }
@@ -71,6 +74,7 @@ public class BattleManager : MonoBehaviour
                 {
                     if (enemyData.cardType == CardData.Type.Block)
                     {
+                        damage.Add(playerData.damage);
                         playerCard.GetComponent<Animator>().SetTrigger("hit");
                         yield return new WaitForSeconds(0.25f);
                     }
@@ -120,6 +124,9 @@ public class BattleManager : MonoBehaviour
     }
     public IEnumerator FightScene()
     {
+        CharacterManager Nelly = gameManager.Nelly;
+        CharacterManager Bruttia = gameManager.Bruttia;
+        int damageIndex = 0;
         yield return new WaitForSeconds(1);
         for (int i = 0; i < playerActions.Count; i++)
         {
@@ -132,12 +139,15 @@ public class BattleManager : MonoBehaviour
                     SetActorStateWithType(enemyActor, enemyActions[i]);
                     SetActorStateWithType(playerActor, playerActions[i]);
                     yield return new WaitForSeconds(0.5f);
+                    Nelly.Damage(1);
                 }
                 else
                 {
                     print("player does " + playerActions[i]);
                     SetActorStateWithType(playerActor, playerActions[i]);
                     yield return new WaitForSeconds(0.5f);
+                    Bruttia.Damage(damage[damageIndex]);
+                    damageIndex++;
                 }
             }
             else if (winner[i] == "enemy")
@@ -149,12 +159,15 @@ public class BattleManager : MonoBehaviour
                     SetActorStateWithType(playerActor, playerActions[i]);
                     SetActorStateWithType(enemyActor, enemyActions[i]);
                     yield return new WaitForSeconds(0.5f);
+                    Bruttia.Damage(Mathf.FloorToInt(damage[damageIndex] / 2));
+                    damageIndex++;
                 }
                 else
                 {
                     print("enemy does " + enemyActions[i]);
                     SetActorStateWithType(enemyActor, enemyActions[i]);
                     yield return new WaitForSeconds(0.5f);
+                    Nelly.Damage(2);
                 }
             }
             else
@@ -164,9 +177,12 @@ public class BattleManager : MonoBehaviour
                     print("player does " + playerActions[i]);
                     SetActorStateWithType(playerActor, playerActions[i]);
                     yield return new WaitForSeconds(1);
+                    Bruttia.Damage(damage[damageIndex]);
+                    damageIndex++;
                     print("enemy does " + enemyActions[i]);
                     SetActorStateWithType(enemyActor, enemyActions[i]);
                     yield return new WaitForSeconds(0.5f);
+                    Nelly.Damage(2);
                 }
                 else 
                 {

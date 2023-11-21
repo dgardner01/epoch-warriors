@@ -2,14 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using TMPro;
 
 public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     IPointerDownHandler, IPointerUpHandler
 {
+    CardData data => GetComponent<CardData>();
+
+    [Header("Display")]
+    public TextMeshProUGUI title;
+    public TextMeshProUGUI cost;
+    public TextMeshProUGUI description;
+    public Image type;
+    public Sprite attack, block, grab;
+    public GameObject[] comboLinks;
+
     Vector3 startPos;
     Vector3 endPos;
     Vector3 currentPos;
 
+    [Header("Interaction")]
     public float hoverSpeed;
     public float hoverOffset;
     public float playHeight;
@@ -27,8 +40,40 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     void Start()
     {
-        startPos = transform.localPosition;
+        startPos = Vector3.zero;
         endPos = startPos + Vector3.up * hoverOffset;
+        InitializeCard();
+    }
+    void InitializeCard()
+    {
+        title.text = data.title;
+        cost.text = "" + data.cost;
+        switch (data.cardType)
+        {
+            case CardData.Type.Attack:
+                type.sprite = attack;
+                description.text = "Do " + data.damage + " damage.";
+                break;
+            case CardData.Type.Block:
+                type.sprite = block;
+                description.text = "Take half damage.";
+                break;
+            case CardData.Type.Grab:
+                type.sprite = grab;
+                description.text = "Add one free card to your combo.";
+                break;
+        }
+        for (int i = 0; i < comboLinks.Length; i++)
+        {
+            if (i == data.order)
+            {
+                comboLinks[i].SetActive(true);
+            }
+            else
+            {
+                comboLinks[i].SetActive(false);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -51,11 +96,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     }
     private void FixedUpdate()
     {
-        if (activePlay && !dragging)
+        if (activePlay && !dragging && !placed)
         {
             FloatOnHover();
         }
     }
+    
     public void FloatOnHover()
     {
         //if hovering, move card y to offset
@@ -72,7 +118,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     public void DragCard()
     {
-        Vector3 cardPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 cardPos = Input.mousePosition;
         cardPos.z = 0;
 
         transform.position = cardPos;
