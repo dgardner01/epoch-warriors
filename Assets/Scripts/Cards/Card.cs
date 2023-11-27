@@ -26,6 +26,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public float hoverSpeed;
     public float hoverOffset;
     public float playHeight;
+    public bool enemy;
 
     bool activePlay;
     bool hovering;
@@ -43,6 +44,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         startPos = Vector3.zero;
         endPos = startPos + Vector3.up * hoverOffset;
         InitializeCard();
+        if (enemy)
+        {
+            animator.SetTrigger("enter");
+        }
     }
     void InitializeCard()
     {
@@ -56,11 +61,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
                 break;
             case CardData.Type.Block:
                 type.sprite = block;
-                description.text = "Take half damage.";
+                description.text = "If attacked, take half damage.";
                 break;
             case CardData.Type.Grab:
                 type.sprite = grab;
-                description.text = "Add one free card to your combo.";
+                description.text = "If blocked, play one free card.";
                 break;
         }
         for (int i = 0; i < comboLinks.Length; i++)
@@ -80,7 +85,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     void Update()
     {
         //if the game is in Card Play state & playable, play is active
-        activePlay = gameManager.gameState == GameManager.GameState.CardPlay && playable;
+        activePlay = gameManager.gameState == GameManager.GameState.CardPlay && playable && !enemy;
         if (activePlay)
         {
             animator.enabled = false;
@@ -118,7 +123,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     public void DragCard()
     {
-        Vector3 cardPos = Input.mousePosition;
+        Vector3 cardPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         cardPos.z = 0;
 
         transform.position = cardPos;

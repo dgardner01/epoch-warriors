@@ -9,11 +9,12 @@ public class UIManager : MonoBehaviour
     public Animator fogAnimator;
     public Animator cardsAnimator;
     public Animator handAnimator;
-
+    public Animator playerFightAreaAnimator;
+    public Animator enemyFightAreaAnimator;
     CardManager cardManager => FindAnyObjectByType<CardManager>();
     GameManager gameManager => FindAnyObjectByType<GameManager>();
 
-    public GameObject spiritMeter;
+    public GameObject spiritMeterFill, spiritMeterBuffer;
     public TextMeshProUGUI spiritText;
     float spiritMax;
     public float currentSpirit;
@@ -32,6 +33,11 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+    }
+
+    private void FixedUpdate()
+    {
         AnimateSpiritMeter();
         AnimateHPBar();
     }
@@ -49,25 +55,33 @@ public class UIManager : MonoBehaviour
     public void TogglePlayButton(bool state)
     {
         comboPlayButton.SetActive(state);
-        comboPlayText.text = "play " + cardManager.CardsInPlayArea() + " card combo";
+        //comboPlayText.text = "play " + cardManager.CardsInPlayArea() + " card combo";
     }
 
     public void AnimateSpiritMeter()
     {
         spiritMax = gameManager.Nelly.maxSpirit;
         currentSpirit = gameManager.Nelly.spirit;
-        float lerpSpeed = 0.1f;
 
         //scale meter based on how much spirit in play
-        Vector3 meterScale = spiritMeter.transform.localScale;
-        meterScale.y = Mathf.Lerp(0, 1, (currentSpirit - spiritInPlay) / spiritMax);
-        spiritMeter.transform.localScale = Vector3.Lerp(spiritMeter.transform.localScale,
-            meterScale, lerpSpeed);
+        float targetScale = (currentSpirit - spiritInPlay) / spiritMax;
+        float currentScaleFill = spiritMeterFill.GetComponent<Image>().fillAmount;
+        float currentScaleBuffer = spiritMeterFill.GetComponent<Image>().fillAmount;
+        bool raising = targetScale > currentScaleBuffer;
+        float fillSpeed = 0.1f;
+        float bufferSpeed = raising ? 0.5f : Time.fixedDeltaTime;
+        float lerpedScale = Mathf.Lerp(currentScaleFill, targetScale, fillSpeed);
+        float bufferScale = Mathf.Lerp(currentScaleBuffer, targetScale, bufferSpeed) + 0.01f;
+        spiritMeterFill.GetComponent<Image>().fillAmount = lerpedScale;
+        spiritMeterBuffer.GetComponent<Image>().fillAmount = bufferScale;
 
         //anchor meter to hand
         Vector3 meterPos = handAnimator.gameObject.transform.position;
-        meterPos.x = spiritMeter.gameObject.transform.position.x;
-        spiritMeter.transform.parent.parent.position = meterPos;
+        meterPos.x = spiritMeterFill.gameObject.transform.position.x;
+        spiritMeterFill.transform.parent.parent.position = meterPos;
+
+        //particles
+        spiritMeterFill.GetComponent<ParticleSystem>().emissionRate = Mathf.Lerp(0, 50, spiritInPlay/currentSpirit);
 
         //update text showing how much spirit left
         spiritText.text = "" + (currentSpirit - spiritInPlay);
@@ -78,9 +92,7 @@ public class UIManager : MonoBehaviour
         CharacterManager Nelly = gameManager.Nelly;
         CharacterManager Bruttia = gameManager.Bruttia;
         float nellyPercent = Nelly.health / Nelly.maxHealth;
-        print(nellyPercent);
         float bruttiaPercent = Bruttia.health / Bruttia.maxHealth;
-        print(bruttiaPercent);
         playerHP.fillAmount = nellyPercent;
         enemyHP.fillAmount = bruttiaPercent;
     }

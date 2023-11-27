@@ -10,8 +10,6 @@ public class GameManager : MonoBehaviour
         FightEnd, 
         CardBegin, 
         CardPlay, 
-        CardBattleBegin,
-        CardBattle,
         CardEnd,
         FightBegin,
     };
@@ -19,9 +17,10 @@ public class GameManager : MonoBehaviour
     public GameState gameState = GameState.Intro;
     public CharacterManager Nelly, Bruttia;
     CardManager cardManager => FindAnyObjectByType<CardManager>();
-    BattleManager battleManager => FindAnyObjectByType<BattleManager>();
+    FightManager fightManager => FindAnyObjectByType<FightManager>();
     UIManager UI => FindAnyObjectByType<UIManager>();
-    EnemyCardUI AI => FindAnyObjectByType<EnemyCardUI>();
+    EnemyAI AI => FindAnyObjectByType<EnemyAI>();
+    public CameraManager Camera => FindAnyObjectByType<CameraManager>();
     // Start is called before the first frame update
     void Start()
     {
@@ -40,87 +39,61 @@ public class GameManager : MonoBehaviour
         switch (gameState)
         {
             case GameState.Intro:
-                CardBegin();
+                StartCoroutine(CardBegin());
                 break;
-
             case GameState.CardBegin:
                 CardPlay();
                 break;
-
             case GameState.CardPlay:
-                CardBattleBegin();
+                StartCoroutine(CardEnd());
                 break;
-
-            case GameState.CardBattleBegin:
-                CardBattle();
-                break;
-
-            case GameState.CardBattle:
-                CardEnd();
-                break;
-
             case GameState.CardEnd:
                 FightBegin();
                 break;
-
-            case GameState.FightBegin:
-                FightEnd();
-                break;
-            case GameState.FightEnd:
-                CardBegin();
-                break;
         }
-        print(gameState);
+        //print(gameState);
     }
 
-    void CardBegin()
+    public IEnumerator CardBegin()
     {
         gameState = GameState.CardBegin;
         cardManager.DrawCards();
         UI.SetAnimationState(UI.fogAnimator, "up", true);
+        Camera.Zoom(4.5f);
+        yield return new WaitForSeconds(.25f);
         UI.SetAnimationState(UI.handAnimator, "up", true);
-        UI.SetAnimationState(UI.handAnimator, "up", true);
+        yield return new WaitForSeconds(1f);
+        Nelly.ReplenishSpirit(3);
+        Bruttia.ReplenishSpirit(3);
+        cardManager.UpdatePlayableHand();
+        yield return new WaitForSeconds(.15f);
+        AI.PlaceCard();
+        yield return new WaitForSeconds(1.25f);
         StartCoroutine(SwitchGameState());
     }
 
     void CardPlay()
     {
         gameState = GameState.CardPlay;
+        cardManager.UpdatePlayArea();
     }
 
-    void CardBattleBegin()
-    {
-        gameState = GameState.CardBattleBegin;
-        UI.TogglePlayButton(false);
-        UI.SetAnimationState(UI.handAnimator, "up", false);
-        UI.SetAnimationState(UI.cardsAnimator, "up", true);
-        StartCoroutine(SwitchGameState());
-    }
-
-    void CardBattle()
-    {
-        gameState = GameState.CardBattle;
-        StartCoroutine(AI.RevealCards());
-    }
-
-    void CardEnd()
+    public IEnumerator CardEnd()
     {
         gameState = GameState.CardEnd;
-        cardManager.UpdatePlayArea();
+        UI.SetAnimationState(UI.handAnimator, "up", false);
         UI.SetAnimationState(UI.fogAnimator, "up", false);
-        UI.SetAnimationState(UI.cardsAnimator, "up", false);
+        cardManager.SendCardsToFight();
+        cardManager.CleanupPlayAreas();
+        UI.SetAnimationState(UI.playerFightAreaAnimator, "up", true);
+        UI.SetAnimationState(UI.enemyFightAreaAnimator, "up", true);
+        yield return new WaitForSeconds(.6f);
+        Camera.Zoom(5);
         StartCoroutine(SwitchGameState());
     }
-    
-    void FightBegin()
+    public void FightBegin()
     {
         gameState = GameState.FightBegin;
-        StartCoroutine(battleManager.FightScene());
-    }
-
-    void FightEnd()
-    {
-        gameState = GameState.FightEnd;
-        StartCoroutine(SwitchGameState());
+        StartCoroutine(fightManager.FightSequence());
     }
 }

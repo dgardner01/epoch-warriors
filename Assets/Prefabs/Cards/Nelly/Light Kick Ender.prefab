@@ -391,6 +391,7 @@ GameObject:
   - component: {fileID: 6519716707269344307}
   - component: {fileID: 6861964506709920002}
   - component: {fileID: 6648245923464751534}
+  - component: {fileID: 3006540055094767719}
   m_Layer: 0
   m_Name: Light Kick Ender
   m_TagString: Untagged
@@ -448,6 +449,7 @@ MonoBehaviour:
   hoverSpeed: 0.2
   hoverOffset: 50
   playHeight: 100
+  enemy: 0
   playable: 1
 --- !u!114 &3477173567884139597
 MonoBehaviour:
@@ -525,6 +527,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!210 &3006540055094767719
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6016777666408399489}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 52
+  m_SortAtRoot: 0
 --- !u!1 &7150468597193871293
 GameObject:
   m_ObjectHideFlags: 0

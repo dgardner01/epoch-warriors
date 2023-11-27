@@ -11,11 +11,15 @@ public class CardManager : MonoBehaviour
     public List<GameObject> handCards;
 
     public GameObject playArea;
+    public GameObject enemyPlayArea;
     public GameObject arrows;
     public GameObject hand;
+    public GameObject versus;
 
     UIManager UI => FindAnyObjectByType<UIManager>();
     GameManager gameManager => FindAnyObjectByType<GameManager>();
+    FightManager fightManager => FindAnyObjectByType<FightManager>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,7 +41,6 @@ public class CardManager : MonoBehaviour
     }
     public void DrawCards()
     {
-        print("hi");
         Transform _hand = hand.transform;
         for (int i = 0; i < _hand.childCount; i++)
         {
@@ -66,7 +69,14 @@ public class CardManager : MonoBehaviour
                 Transform cardParent = container.transform.GetChild(i);
                 card.transform.SetParent(cardParent);
                 card.transform.localScale = Vector3.one;
-                card.transform.localPosition = Vector3.zero;
+                if (card.GetComponent<Card>().enemy)
+                {
+                    card.transform.localPosition = Vector3.up * 100;
+                }
+                else
+                {
+                    card.transform.localPosition = Vector3.zero;
+                }    
                 card.transform.localRotation = Quaternion.Euler(Vector3.zero);
                 UpdatePlayArea();
                 return;
@@ -76,8 +86,12 @@ public class CardManager : MonoBehaviour
     public void UpdatePlayArea()
     {
         //move parent position to center cards
-        float _x = Mathf.Lerp(465, 0, CardsInPlayArea() / playArea.transform.childCount);
         Vector3 parentPos = playArea.transform.localPosition;
+        float _x = 350;
+        if (CardsInPlayArea() > 0)
+        {
+            _x = Mathf.Lerp(350, -120, (CardsInPlayArea()-1) / playArea.transform.childCount);
+        }
         parentPos.x = _x;
         playArea.transform.localPosition = parentPos;
         arrows.transform.localPosition = parentPos;
@@ -96,6 +110,27 @@ public class CardManager : MonoBehaviour
             }
         }
 
+        //draw particles
+        if (gameManager.gameState == GameManager.GameState.CardPlay)
+        {
+            for (int i = 0; i < playArea.transform.childCount; i++)
+            {
+                Transform child = playArea.transform.GetChild(i);
+                ParticleSystem particles = child.GetComponent<ParticleSystem>();
+                if (i == CardsInPlayArea() && CardsInPlayArea() == 0)
+                {
+                    particles.enableEmission = true;
+                }
+                else
+                {
+                    particles.enableEmission = false;
+                }
+            }
+        }
+
+        //draw versus text
+        versus.SetActive(CardsInPlayArea() > 0);
+
         //sort play area
         for (int i = 0; i < playArea.transform.childCount; i++)
         {
@@ -106,7 +141,9 @@ public class CardManager : MonoBehaviour
                 //if last slot is empty move to that slot
                 if (_playArena.GetChild(i - 1).childCount == 0)
                 {
-                    _playArena.GetChild(i).GetChild(0).SetParent(_playArena.GetChild(i - 1));
+                    Transform child = _playArena.GetChild(i).GetChild(0);
+                    child.SetParent(_playArena.GetChild(i - 1));
+                    child.localPosition = Vector3.zero;
                 }
             }
         }
@@ -148,7 +185,7 @@ public class CardManager : MonoBehaviour
                 GameObject _cardObj = _hand.GetChild(i).GetChild(0).gameObject;
                 CardData _cardData = _cardObj.GetComponent<CardData>();
                 Card _card = _cardObj.GetComponent<Card>();
-                if (_cardData.order < 1 && CardsInPlayArea() > 0 || _firstOrder > 0 || _lastOrder == 2)
+                if (_cardData.order < 1 && CardsInPlayArea() > 0 || _cardData.cost > (gameManager.Nelly.spirit-TotalSpiritInPlayArea()) || _firstOrder > 1 || _lastOrder == 2)
                 {
                     _cardObj.GetComponent<Image>().color = Color.gray;
                     _card.playable = false;
@@ -163,7 +200,7 @@ public class CardManager : MonoBehaviour
 
         //cannot play a combo unless it is single or has a starter and ender
         bool minSpirit = UI.currentSpirit - TotalSpiritInPlayArea() > -1;
-        if (minSpirit && (CardsInPlayArea() == 1 || _firstOrder == 0 && _lastOrder == 2))
+        if (minSpirit && CardsInPlayArea() > 0)
         {
             UI.TogglePlayButton(true);
         }
@@ -199,5 +236,35 @@ public class CardManager : MonoBehaviour
             }
         }
         return spirit;
+    }
+    public void SendCardsToFight()
+    {
+        for (int i = 0; i < playArea.transform.childCount; i++)
+        {
+            print(i);
+            Transform _playArea = playArea.transform;
+            Transform _enemyArea = enemyPlayArea.transform;
+            if (_playArea.GetChild(0).childCount > 0)
+            {
+                print("player card" + i);
+                GameObject card = _playArea.GetChild(0).GetChild(0).gameObject;
+                PlaceCard(card, fightManager.playerFightArea);
+            }
+            if (_enemyArea.GetChild(0).childCount > 0)
+            {
+                print("enemy card" + i);
+                GameObject card = _enemyArea.GetChild(0).GetChild(0).gameObject;
+                PlaceCard(card, fightManager.enemyFightArea);
+            }
+        }
+    }
+    public void CleanupPlayAreas()
+    {
+        for (int i = 0; i < arrows.transform.childCount; i++)
+        {
+            arrows.transform.GetChild(i).gameObject.SetActive(false);
+        }
+        versus.SetActive(false);
+        UI.TogglePlayButton(false);
     }
 }
