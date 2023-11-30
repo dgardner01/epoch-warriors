@@ -23,7 +23,6 @@ public class FightManager : MonoBehaviour
     }
     public IEnumerator FightSequence()
     {
-        yield return new WaitForSeconds(0);
         for (int i = 0; i < playerFightArea.transform.childCount; i++)
         {
 
@@ -52,6 +51,7 @@ public class FightManager : MonoBehaviour
                     cameraManager.Zoom(4f);
                     yield return new WaitForSeconds(0.25f);
                     cameraManager.FreezeThenShake(.3f, 0.01f, .5f);
+                    Nelly.Damage(1);
                     playerCard.GetComponent<Animator>().SetTrigger("discard");
                     enemyCard.GetComponent<Animator>().SetTrigger("discard");
                     yield return new WaitForSeconds(0.5f);
@@ -63,6 +63,7 @@ public class FightManager : MonoBehaviour
                     cameraManager.Zoom(4f);
                     yield return new WaitForSeconds(0.25f);
                     cameraManager.FreezeThenShake(.3f, 0.01f, 1f);
+                    Nelly.Damage(2);
                     playerCard.GetComponent<Animator>().SetTrigger("discard");
                     enemyCard.GetComponent<Animator>().SetTrigger("discard");
                     yield return new WaitForSeconds(0.5f);
@@ -74,6 +75,7 @@ public class FightManager : MonoBehaviour
                     cameraManager.Zoom(4f);
                     yield return new WaitForSeconds(0.25f);
                     cameraManager.FreezeThenShake(.3f, 0.01f, 1f);
+                    Nelly.Damage(2);
                     enemyCard.GetComponent<Animator>().SetTrigger("discard");
                     yield return new WaitForSeconds(0.5f);
                     cameraManager.Zoom(5f);
@@ -83,6 +85,7 @@ public class FightManager : MonoBehaviour
                     cameraManager.Zoom(4f);
                     yield return new WaitForSeconds(0.15f);
                     cameraManager.FreezeThenShake(.3f * playerCardData.damage, 0.01f, .3f * playerCardData.damage);
+                    Bruttia.Damage(playerCardData.damage);
                     playerCard.GetComponent<Animator>().SetTrigger("discard");
                     yield return new WaitForSeconds(0.5f);
                     cameraManager.Zoom(5f);
@@ -104,11 +107,29 @@ public class FightManager : MonoBehaviour
                     cameraManager.Zoom(4f);
                     yield return new WaitForSeconds(0.15f);
                     cameraManager.FreezeThenShake(.3f * playerCardData.damage, 0.01f, .3f * playerCardData.damage);
+                    Bruttia.Damage(playerCardData.damage);
                     playerCard.GetComponent<Animator>().SetTrigger("discard");
                     yield return new WaitForSeconds(0.5f);
                     cameraManager.Zoom(5f);
                 }
             }
         }
+        yield return new WaitForSeconds(0.25f);
+        UI.SetAnimationState(UI.playerFightAreaAnimator, "up", false);
+        UI.SetAnimationState(UI.enemyFightAreaAnimator, "up", false);
+        yield return new WaitForSeconds(0.25f);
+        for (int i = 0; i < playerFightArea.transform.childCount; i++)
+        {
+            if (playerFightArea.transform.GetChild(i).childCount > 0)
+            {
+                Destroy(playerFightArea.transform.GetChild(i).GetChild(0).gameObject);
+            }
+            if (enemyFightArea.transform.GetChild(i).childCount > 0)
+            {
+                Destroy(enemyFightArea.transform.GetChild(i).GetChild(0).gameObject);
+            }
+        }
+        gameManager.Bruttia.attack = true;
+        StartCoroutine(gameManager.SwitchGameState());
     }
 }

@@ -57,15 +57,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         {
             case CardData.Type.Attack:
                 type.sprite = attack;
-                description.text = "Do " + data.damage + " damage.";
                 break;
             case CardData.Type.Block:
                 type.sprite = block;
-                description.text = "If attacked, take half damage.";
                 break;
             case CardData.Type.Grab:
                 type.sprite = grab;
-                description.text = "If blocked, play one free card.";
                 break;
         }
         for (int i = 0; i < comboLinks.Length; i++)

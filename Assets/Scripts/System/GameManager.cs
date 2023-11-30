@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
         CardBegin, 
         CardPlay, 
         CardEnd,
-        FightBegin,
+        Fight,
     };
     public float turnTransitionTime;
     public GameState gameState = GameState.Intro;
@@ -50,6 +50,9 @@ public class GameManager : MonoBehaviour
             case GameState.CardEnd:
                 FightBegin();
                 break;
+            case GameState.Fight:
+                StartCoroutine(CardBegin());
+                break;
         }
         //print(gameState);
     }
@@ -63,8 +66,8 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(.25f);
         UI.SetAnimationState(UI.handAnimator, "up", true);
         yield return new WaitForSeconds(1f);
-        Nelly.ReplenishSpirit(3);
-        Bruttia.ReplenishSpirit(3);
+        Nelly.Spirit(3);
+        Bruttia.Spirit(3);
         cardManager.UpdatePlayableHand();
         yield return new WaitForSeconds(.15f);
         AI.PlaceCard();
@@ -83,17 +86,18 @@ public class GameManager : MonoBehaviour
         gameState = GameState.CardEnd;
         UI.SetAnimationState(UI.handAnimator, "up", false);
         UI.SetAnimationState(UI.fogAnimator, "up", false);
+        Nelly.Spirit(-cardManager.TotalSpiritInPlayArea());
         cardManager.SendCardsToFight();
         cardManager.CleanupPlayAreas();
+        yield return new WaitForSeconds(.6f);
         UI.SetAnimationState(UI.playerFightAreaAnimator, "up", true);
         UI.SetAnimationState(UI.enemyFightAreaAnimator, "up", true);
-        yield return new WaitForSeconds(.6f);
         Camera.Zoom(5);
         StartCoroutine(SwitchGameState());
     }
     public void FightBegin()
     {
-        gameState = GameState.FightBegin;
+        gameState = GameState.Fight;
         StartCoroutine(fightManager.FightSequence());
     }
 }

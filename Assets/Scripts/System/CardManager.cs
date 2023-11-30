@@ -241,7 +241,6 @@ public class CardManager : MonoBehaviour
     {
         for (int i = 0; i < playArea.transform.childCount; i++)
         {
-            print(i);
             Transform _playArea = playArea.transform;
             Transform _enemyArea = enemyPlayArea.transform;
             if (_playArea.GetChild(0).childCount > 0)
@@ -253,7 +252,7 @@ public class CardManager : MonoBehaviour
             if (_enemyArea.GetChild(0).childCount > 0)
             {
                 print("enemy card" + i);
-                GameObject card = _enemyArea.GetChild(0).GetChild(0).gameObject;
+                GameObject card = _enemyArea.GetChild(i).GetChild(0).gameObject;
                 PlaceCard(card, fightManager.enemyFightArea);
             }
         }

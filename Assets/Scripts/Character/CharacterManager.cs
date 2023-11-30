@@ -26,14 +26,14 @@ public class CharacterManager : MonoBehaviour
     {
         float slowSpeed = 0.1f;
         float targetSpeed = 1;
-        if (gameManager.gameState != GameManager.GameState.Intro && gameManager.gameState != GameManager.GameState.FightBegin)
+        if (gameManager.gameState != GameManager.GameState.Intro && gameManager.gameState != GameManager.GameState.Fight)
         {
             if (attack)
             {
                 animator.SetTrigger("attack");
                 attack = false;
             }
-            targetSpeed = 0.005f;
+            targetSpeed = 0.0025f;
         }
         animator.speed = Mathf.Lerp(animator.speed, targetSpeed, slowSpeed);
     }
@@ -42,9 +42,9 @@ public class CharacterManager : MonoBehaviour
         health -= damage;
     }
 
-    public void ReplenishSpirit(int numReplenished)
+    public void Spirit(int _spirit)
     {
-        spirit += numReplenished;
+        spirit += _spirit;
     }
 
     public void TriggerAnimation(string state)
