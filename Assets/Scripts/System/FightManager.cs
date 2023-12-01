@@ -114,10 +114,10 @@ public class FightManager : MonoBehaviour
                 }
             }
         }
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.1f);
         UI.SetAnimationState(UI.playerFightAreaAnimator, "up", false);
         UI.SetAnimationState(UI.enemyFightAreaAnimator, "up", false);
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.1f);
         for (int i = 0; i < playerFightArea.transform.childCount; i++)
         {
             if (playerFightArea.transform.GetChild(i).childCount > 0)

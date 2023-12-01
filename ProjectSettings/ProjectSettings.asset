@@ -561,7 +561,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Standalone: USE_TWINE
+    Standalone: USE_TWINE;TMP_PRESENT
     WebGL: USE_TWINE
   additionalCompilerArguments: {}
   platformArchitecture: {}

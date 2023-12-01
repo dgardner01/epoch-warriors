@@ -14,8 +14,10 @@ public class GameManager : MonoBehaviour
         Fight,
     };
     public float turnTransitionTime;
+    bool started;
     public GameState gameState = GameState.Intro;
     public CharacterManager Nelly, Bruttia;
+    DialogueManager dialogueManager => FindAnyObjectByType<DialogueManager>();
     CardManager cardManager => FindAnyObjectByType<CardManager>();
     FightManager fightManager => FindAnyObjectByType<FightManager>();
     UIManager UI => FindAnyObjectByType<UIManager>();
@@ -24,13 +26,18 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SwitchGameState());
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (!dialogueManager.active && gameState == GameState.Intro && !started)
+        {
+            started = true;
+            UI.SetAnimationState(dialogueManager.dialogueAnimator, "up", false);
+            StartCoroutine(SwitchGameState());
+        }
     }
 
     public IEnumerator SwitchGameState()
