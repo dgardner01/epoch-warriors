@@ -31839,7 +31839,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -157.4}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &995560098
@@ -31875,12 +31875,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81f4d1411181f2043b2213cfead4e196, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Nelly: {fileID: 0}
-  Bruttia: {fileID: 0}
-  dialogueAnimator: {fileID: 0}
-  nellyLines: []
-  bruttiaLines: []
-  active: 0
+  Nelly: {fileID: 1635400441}
+  Bruttia: {fileID: 820566775}
+  dialogueAnimator: {fileID: 995560098}
+  nellyText: {fileID: 1541972349}
+  bruttiaText: {fileID: 1098184847}
+  nellyLines:
+  - 
+  - Really, Bruttia? Again?
+  - 
+  - Fine. Let's get this over with.
+  bruttiaLines:
+  - I challenge you to a fight!
+  - 
+  - I won't lose this time, Nelly!
+  - 
+  index: 0
+  active: 1
 --- !u!1 &1012569834
 GameObject:
   m_ObjectHideFlags: 0
@@ -36989,7 +37000,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: I challenge you to a fight!
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

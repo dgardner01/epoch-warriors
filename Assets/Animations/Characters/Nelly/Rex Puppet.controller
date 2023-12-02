@@ -127,7 +127,7 @@ AnimatorStateMachine:
     m_Position: {x: 320, y: 270, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -9172299301257892620}
-    m_Position: {x: 320, y: 330, z: 0}
+    m_Position: {x: 320, y: 340, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 3178859547062468480}
@@ -138,9 +138,9 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 130, y: 200, z: 0}
+  m_AnyStatePosition: {x: 110, y: 240, z: 0}
   m_EntryPosition: {x: -300, y: 130, z: 0}
-  m_ExitPosition: {x: 570, y: 200, z: 0}
+  m_ExitPosition: {x: 570, y: 240, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: -1130350083376119500}
 --- !u!1101 &-4953192313231807026
@@ -321,6 +321,12 @@ AnimatorController:
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
   - m_Name: hurt
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: axekick
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
